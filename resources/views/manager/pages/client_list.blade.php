@@ -29,60 +29,51 @@
                                         <thead class="bg-primary text-white">
                                         <tr>
                                             <th>#</th>
-                                            <th>Driver Name</th>
+                                            <th>Vehicle Owner</th>
+                                            <th>Email</th>
+                                            <th>Phone Number</th>
                                             <th>Address</th>
-                                            <th>License No.</th>
-                                            <th>Nida No.</th>
-                                            <th>Phone</th>
-                                            <th>Assigned Vehicle</th>
+                                            <th>Owner Number</th>
                                             <th>Status</th>
                                             <th>Registered On</th>
                                             <th>Actions</th>
                                         </tr>
                                         </thead>
+
                                         <tbody>
-                                        <!-- Sample Data -->
+                                        @forelse($ownerList as $index => $owner)
+                                            <tr>
+                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ $owner['first_name'] ?? '' }} {{ $owner['last_name'] ?? '' }}</td>
+                                                <td>{{ $owner['email'] ?? '-' }}</td>
+                                                <td>{{ $owner['phone'] ?? '-' }}</td>
+                                                <td>{{ $owner['address'] ?? '-' }}</td>
+                                                <td>{{ $owner['userNumber'] ?? '-' }}</td>
+                                                <td>
+                                                    @if(($owner['status'] ?? '') === 'ACTIVE')
+                                                        <span class="badge bg-success">Active</span>
+                                                    @else
+                                                        <span class="badge bg-danger">Inactive</span>
+                                                    @endif
+                                                </td>
+                                                <td>{{ $owner['created_at'] ?? '-' }}</td>
 
-{{--                                        @foreach($driverList as $driver)--}}
-{{--                                            <tr>--}}
-{{--                                                <td>{{ $loop->iteration }}</td>--}}
+                                                <td>
+                                                    <button class="btn btn-primary btn-sm">
+                                                        View
+                                                    </button>
+                                                </td>
+                                            </tr>
 
-{{--                                                --}}{{-- DRIVER NAME FROM additional_info --}}
-{{--                                                <td>--}}
-{{--                                                    {{ $driver->additional_info['first_name'] ?? '' }}--}}
-{{--                                                    {{ $driver->additional_info['last_name'] ?? '' }}--}}
-{{--                                                </td>--}}
-
-{{--                                                <td>{{ $driver->additional_info['address'] ?? '—' }}</td>--}}
-
-{{--                                                <td>{{ $driver->license_number }}</td>--}}
-{{--                                                <td>{{ $driver->nida_number }}</td>--}}
-
-{{--                                                <td>{{ $driver->additional_info['phone'] ?? '' }}</td>--}}
-
-{{--                                                <td>--}}
-{{--                                                    --}}{{-- Example vehicle placeholder (update later if available) --}}
-{{--                                                    {{ $driver->vehicle ?? '—' }}--}}
-{{--                                                </td>--}}
-
-{{--                                                <td>--}}
-{{--                                                    <span class="badge bg-success">{{ $driver->license_status }}</span>--}}
-{{--                                                </td>--}}
-
-{{--                                                <td>{{ \Carbon\Carbon::parse($driver->created_at)->format('d M Y') }}</td>--}}
-
-{{--                                                <td>--}}
-{{--                                                    <button class="btn btn-outline-success btn-sm me-1">--}}
-{{--                                                        <i class="icon-eye menu-icon text-center"></i>--}}
-{{--                                                    </button>--}}
-{{--                                                    <button class="btn btn-outline-danger btn-sm">--}}
-{{--                                                        <i class="icon-trash menu-icon"></i>--}}
-{{--                                                    </button>--}}
-{{--                                                </td>--}}
-{{--                                            </tr>--}}
-{{--                                        @endforeach--}}
-
+                                        @empty
+                                            <tr>
+                                                <td colspan="9" class="text-center text-muted py-3">
+                                                    No owners found.
+                                                </td>
+                                            </tr>
+                                        @endforelse
                                         </tbody>
+
                                     </table>
                                 </div>
 

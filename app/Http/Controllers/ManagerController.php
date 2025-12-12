@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Dto\JsonResponse;
+use App\Service\NotificationService;
 use App\Service\UserService;
 use App\Util\LoggerUtil;
 use Illuminate\Http\Request;
@@ -15,12 +16,15 @@ class ManagerController extends Controller
     protected $endPointToken;
     protected $userService;
 
+    protected $notificationService;
+
     protected $clientHost;
-    public function __construct(UserService $userService ){
+    public function __construct(UserService $userService , NotificationService $notificationService ){
         $this->userService = $userService;
         $this->authHost = config('app.auth_host');
         $this->endPointToken=config('app.jwt_end_point_token');
         $this->clientHost = config('app.client_host');
+        $this->notificationService = $notificationService;
 
 
     }
@@ -43,9 +47,34 @@ class ManagerController extends Controller
         return view('manager.dashboard');
     }
 
-    public function ownerList(){
-        return view('manager.pages.client_list');
+    public function ownerList()
+    {
+        try {
+            // Call API
+            $response = Http::withToken($this->endPointToken)->get($this->authHost . '/api/v1/users/owner');
+
+            LoggerUtil::info("Owner List API RAW Response: " . $response->body());
+
+            $res = $response->json();
+
+            if ($response->status() !== 200 || ($res['status'] ?? null) !== "200") {
+                LoggerUtil::warning("Failed to fetch owner list. Response: " . json_encode($res));
+
+                return view('manager.pages.client_list', ['ownerList' => []])->with('error', 'Failed to load owner list.');
+            }
+
+            $ownerList = $res['Data'] ?? [];
+
+           // dd($ownerList);
+            return view('manager.pages.client_list', ['ownerList' => $ownerList]);
+
+        } catch (\Exception $e) {
+
+            LoggerUtil::error("Error fetching owner list: " . $e->getMessage());
+            return view('manager.pages.client_list', ['ownerList' => []])->with('error', 'Something went wrong. Please try again.');
+        }
     }
+
 
     public function ownerRegistration(){
         $user = $this->authUser();
@@ -55,6 +84,8 @@ class ManagerController extends Controller
     }
 
     public function ownerRegistrationStore(Request $request){
+
+        $user = $this->authUser();
 
         LoggerUtil::info("vehicle  registration request: " . json_encode($request->all()));
 
@@ -75,16 +106,17 @@ class ManagerController extends Controller
                 LoggerUtil::warning("Failed to register vehicle please check again, $response");
             }
 
-            $userNumber = $res['Data']['userNumber'];
+            $owenNumber = $res['Data']['userNumber'];
 
             $ownerData= json_encode($res['Data'] ?? []);
 
-            if (!$userNumber) {
+            if (!$owenNumber) {
                 LoggerUtil::warning("Failed to register vehicle owner please check again, $response");
                 return null;
             }
             // TODO Notification logic here
 
+            $this->notificationService->sendOwnerRegistrationNotification( $ownerInfo['first_name'], $ownerInfo['email'], $ownerInfo['phone'], $user->userNumber);
 
             return JsonResponse::get(200,'Owner registered successfully', $ownerData);
 

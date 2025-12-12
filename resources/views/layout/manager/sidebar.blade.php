@@ -16,7 +16,8 @@
             <div class="collapse" id="auth">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"> <a class="nav-link" href="#">Operations</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="{{route('manager.owner-list')}}"> Clients </a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{route('manager.owner-list')}}"> Owners </a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{route('manager.owner-list')}}"> Drivers </a></li>
                 </ul>
             </div>
         </li>
@@ -29,8 +30,8 @@
             </a>
             <div class="collapse" id="icons">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="#">Active</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="#">Finished</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="#">Vehicle</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="#">Property</a></li>
                 </ul>
             </div>
         </li>
@@ -43,7 +44,8 @@
             </a>
             <div class="collapse" id="tables">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="#">Active</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="#">Vehicle</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="#">Property</a></li>
                 </ul>
             </div>
         </li>
