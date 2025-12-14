@@ -17,11 +17,8 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h4 class="card-title text-primary mb-0">
-                                        <i class="mdi mdi-account-tie"></i> Vehicle Driver  List
+                                        <i class="mdi mdi-account-tie"></i> Vehicle   List
                                     </h4>
-<!--                                    <a href="{{route('manager.owner-registration')}}" class="btn btn-primary btn-sm">-->
-<!--                                        <i class="mdi mdi-account-plus"></i> Register  Driver-->
-<!--                                    </a>-->
                                 </div>
 
                                 <div class="table-responsive">
@@ -29,52 +26,54 @@
                                         <thead class="bg-primary text-white">
                                         <tr>
                                             <th>#</th>
-                                            <th>Driver Name</th>
-                                            <th>Email</th>
-                                            <th>Phone</th>
-                                            <th>Gender</th>
-                                            <th>Address</th>
+                                            <th>Vehicle No</th>
+                                            <th>Model</th>
+                                            <th>Type</th>
+                                            <th>Color</th>
+                                            <th>Condition</th>
+                                            <th>Capacity</th>
+                                            <th>Reg Number</th>
+                                            <th>Owner Name</th>
                                             <th>Owner Number</th>
-                                            <th>License Number</th>
-                                            <th>License Status</th>
-<!--                                            <th>License Expire Date</th>-->
-                                            <th>NIDA Number</th>
-                                            <th>Current Status</th>
-<!--                                            <th>Remarks</th>-->
-<!--                                            <th>Registered On</th>-->
+                                            <th>Registration Date</th>
+                                            <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
                                         </thead>
 
                                         <tbody>
-                                        @forelse($driverList as $index => $driver)
+                                        @forelse($vehicleList as $index => $vehicle)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
 
+                                            <td>{{ $vehicle['vehicle_number'] ?? '-' }}</td>
 
+                                            <td>{{ $vehicle['vehicle_model'] ?? '-' }}</td>
+
+                                            <td>{{ $vehicle['vehicle_type'] ?? '-' }}</td>
+
+                                            <td>{{ $vehicle['vehicle_color'] ?? '-' }}</td>
+
+                                            <td>{{ $vehicle['vehicle_condition'] ?? '-' }}</td>
+
+                                            <td>{{ $vehicle['capacity'] ?? '-' }}</td>
+
+                                            <td>{{ $vehicle['vehicle_reg_number'] ?? '-' }}</td>
+
+                                            <td>{{ ucfirst($vehicle['owner_name'] ?? '-') }}</td>
+
+                                            <td>{{ $vehicle['owner_number'] ?? '-' }}</td>
+
+                                            <td>{{ $vehicle['registration_date'] ?? '-' }}</td>
+
+                                            {{-- Status --}}
                                             <td>
-                                                {{ $driver['additional_info']['first_name'] ?? '' }}
-                                                {{ $driver['additional_info']['last_name'] ?? '' }}
+                                                @if(($vehicle['status'] ?? '') === 'LOANED')
+                                                <span class="badge bg-warning">Loaned</span>
+                                                @else
+                                                <span class="badge bg-success">{{ $vehicle['status'] ?? '-' }}</span>
+                                                @endif
                                             </td>
-
-                                            <td>{{ $driver['additional_info']['email'] ?? '-' }}</td>
-
-                                            <td>{{ $driver['additional_info']['phone'] ?? '-' }}</td>
-
-                                            <td>{{ $driver['additional_info']['gender'] ?? '-' }}</td>
-
-                                            <td>{{ $driver['additional_info']['address'] ?? '-' }}</td>
-
-                                            <td>{{ $driver['additional_info']['userNumber'] ?? '-' }}</td>
-
-                                            <td>{{ $driver['license_number'] ?? '-' }}</td>
-
-                                            <td>{{ $driver['license_status'] ?? '-' }}</td>
-
-                                            <td>{{ $driver['nida_number'] ?? '-' }}</td>
-
-                                            <td>{{ $driver['current_status'] ?? '-' }}</td>
-
 
                                             {{-- Actions --}}
                                             <td>
@@ -84,12 +83,14 @@
 
                                         @empty
                                         <tr>
-                                            <td colspan="15" class="text-center text-muted py-3">
-                                                No Driver Found.
+                                            <td colspan="13" class="text-center text-muted py-3">
+                                                No Vehicles Found.
                                             </td>
                                         </tr>
                                         @endforelse
                                         </tbody>
+
+
 
 
                                     </table>

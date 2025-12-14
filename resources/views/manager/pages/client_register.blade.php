@@ -22,7 +22,6 @@
                                 <form id="ownerForm" class="forms-sample" enctype="multipart/form-data">
                                     @csrf
                                     <div class="row">
-{{--                                        <input type="hidden" class="form-control" id="owner_number" name="owner_number" value="{{$user->userNumber}}" placeholder="Name" required>--}}
 
                                         <div class="col-md-4">
                                             <div class="form-group">
@@ -72,6 +71,9 @@
                                         <label for="exampleTextarea1">Remarks</label>
                                         <textarea class="form-control" id="remarks" name="remarks" rows="4"></textarea>
                                     </div>
+
+                                    <h4 class="card-description">Owner Agreements</h4>
+                                    <h4 class="card-description">Collection Accounts</h4>
                                     <div class="d-flex justify-content-center">
                                         <div class="col-md-4">
                                             <button type="submit" id="submitButton" class="btn btn-primary btn-block me-2">
@@ -111,9 +113,7 @@
             e.preventDefault();  // prevent default form submit
 
             let formData = new FormData(this);
-
             startLoader();
-
             $.ajax({
                 url: "{{route('manager.owner_registration_store')}}",
                 type: "POST",

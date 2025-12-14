@@ -19,7 +19,7 @@
                         <div class="card shadow-sm">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h4 class="card-title mb-0">Vehicle  List</h4>
+                                    <h4 class="card-title mb-0">Driver Loans  List</h4>
                                     <!-- Button to open modal -->
                                 </div>
 
@@ -28,54 +28,66 @@
                                         <thead class="bg-primary text-white">
                                         <tr>
                                             <th>#</th>
-                                            <th>Vehicle No</th>
-                                            <th>Model</th>
-                                            <th>Type</th>
-                                            <th>Color</th>
-                                            <th>Condition</th>
-                                            <th>Capacity</th>
-                                            <th>Reg Number</th>
-                                            <th>Owner Name</th>
-                                            <th>Owner Number</th>
-                                            <th>Registration Date</th>
+                                            <th>Loan Number</th>
+                                            <th>Agreement No</th>
+                                            <th>Driver Number</th>
+                                            <th>Final Amount (TZS)</th>
+                                            <th>Installment (TZS)</th>
+                                            <th>Paid Amount (TZS)</th>
+                                            <th>Balance (TZS)</th>
+                                            <th>Profit %</th>
+                                            <th>Rental Duration</th>
                                             <th>Status</th>
+                                            <!--                                            <th>State</th>-->
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
                                             <th>Actions</th>
                                         </tr>
                                         </thead>
 
                                         <tbody>
-                                        @forelse($vehicleList as $index => $vehicle)
+                                        @forelse($loanList as $index => $loan)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
 
-                                            <td>{{ $vehicle['vehicle_number'] ?? '-' }}</td>
+                                            <td>{{ $loan['loan_number'] ?? '-' }}</td>
 
-                                            <td>{{ $vehicle['vehicle_model'] ?? '-' }}</td>
+                                            <td>{{ $loan['agreement_number'] ?? '-' }}</td>
 
-                                            <td>{{ $vehicle['vehicle_type'] ?? '-' }}</td>
+                                            <td>{{ $loan['driver_number'] ?? '-' }}</td>
 
-                                            <td>{{ $vehicle['vehicle_color'] ?? '-' }}</td>
+                                            <td>{{ number_format($loan['final_loan_amount'] ?? 0, 2) }}</td>
 
-                                            <td>{{ $vehicle['vehicle_condition'] ?? '-' }}</td>
+                                            <td>{{ number_format($loan['installment_amount'] ?? 0, 2) }}</td>
 
-                                            <td>{{ $vehicle['capacity'] ?? '-' }}</td>
+                                            <td>{{ number_format($loan['paid_amount'] ?? 0, 2) }}</td>
 
-                                            <td>{{ $vehicle['vehicle_reg_number'] ?? '-' }}</td>
+                                            <td>{{ number_format($loan['balance'] ?? 0, 2) }}</td>
 
-                                            <td>{{ ucfirst($vehicle['owner_name'] ?? '-') }}</td>
+                                            <td>{{ $loan['profit_percentage'] ?? '-' }}%</td>
 
-                                            <td>{{ $vehicle['owner_number'] ?? '-' }}</td>
-
-                                            <td>{{ $vehicle['registration_date'] ?? '-' }}</td>
+                                            <td>{{ $loan['rental_duration'] ?? '-' }}</td>
 
                                             {{-- Status --}}
                                             <td>
-                                                @if(($vehicle['status'] ?? '') === 'LOANED')
-                                                <span class="badge bg-warning">Loaned</span>
+                                                @if(($loan['status'] ?? '') === 'ACCEPTED')
+                                                <span class="badge bg-success">Accepted</span>
                                                 @else
-                                                <span class="badge bg-success">{{ $vehicle['status'] ?? '-' }}</span>
+                                                <span class="badge bg-warning">{{ $loan['status'] ?? '-' }}</span>
                                                 @endif
                                             </td>
+
+                                            {{-- State --}}
+                                            <!--                                            <td>-->
+                                            <!--                                                @if(($loan['state'] ?? '') === 'ACTIVE')-->
+                                            <!--                                                <span class="badge bg-primary">Active</span>-->
+                                            <!--                                                @else-->
+                                            <!--                                                <span class="badge bg-secondary">{{ $loan['state'] ?? '-' }}</span>-->
+                                            <!--                                                @endif-->
+                                            <!--                                            </td>-->
+
+                                            <td>{{ $loan['startDate'] ?? '-' }}</td>
+                                            <td>{{ $loan['endDate'] ?? '-' }}</td>
 
                                             {{-- Actions --}}
                                             <td>
@@ -85,13 +97,12 @@
 
                                         @empty
                                         <tr>
-                                            <td colspan="13" class="text-center text-muted py-3">
-                                                No Vehicles Found.
+                                            <td colspan="15" class="text-center text-muted py-3">
+                                                No Loan Records Found.
                                             </td>
                                         </tr>
                                         @endforelse
                                         </tbody>
-
 
 
 

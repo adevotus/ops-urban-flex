@@ -1,11 +1,33 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('manager.dashboard') ? 'active' : '' }}" href="{{route('manager.dashboard')}}">
+            <a class="nav-link {{ request()->routeIs('manager.dashboard.*') ? 'active' : '' }}"
+               data-toggle="collapse"
+               href="#managerDashboard"
+               aria-expanded="{{ request()->routeIs('manager.dashboard.*') ? 'true' : 'false' }}">
                 <i class="icon-grid menu-icon"></i>
                 <span class="menu-title">Dashboard</span>
+                <i class="menu-arrow"></i>
             </a>
+
+            <div class="collapse {{ request()->routeIs('manager.dashboard.*') ? 'show' : '' }}"
+                 id="managerDashboard">
+                <ul class="nav flex-column sub-menu">
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('manager.dashboard.vehicle') ? 'active' : '' }}" href="{{ route('manager.dashboard.vehicle') }}">Vehicle Landing</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('manager.dashboard.property') ? 'active' : '' }}" href="{{ route('manager.dashboard.property') }}">Property Rental
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
         </li>
+
+
 
         <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
@@ -17,7 +39,7 @@
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"> <a class="nav-link" href="#">Operations</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{route('manager.owner-list')}}"> Owners </a></li>
-                    <li class="nav-item"> <a class="nav-link" href="{{route('manager.owner-list')}}"> Drivers </a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{route('manager.driver-list')}}"> Drivers </a></li>
                 </ul>
             </div>
         </li>
@@ -30,7 +52,7 @@
             </a>
             <div class="collapse" id="icons">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="#">Vehicle</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{route('manager.loan-list')}}">Vehicle</a></li>
                     <li class="nav-item"> <a class="nav-link" href="#">Property</a></li>
                 </ul>
             </div>
@@ -44,10 +66,24 @@
             </a>
             <div class="collapse" id="tables">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="#">Vehicle</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{route('manager.agreement-list')}}">Vehicle</a></li>
                     <li class="nav-item"> <a class="nav-link" href="#">Property</a></li>
                 </ul>
             </div>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link  {{ request()->routeIs('manager.vehicle-list') ? 'active' : '' }}" href="{{route('manager.vehicle-list')}}">
+                <i class="icon-contract menu-icon"></i>
+                <span class="menu-title">Vehicles</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="icon-paper menu-icon"></i>
+                <span class="menu-title">Payments</span>
+            </a>
         </li>
 
         <li class="nav-item">
@@ -65,19 +101,7 @@
             </div>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="icon-contract menu-icon"></i>
-                <span class="menu-title">Vehicles</span>
-            </a>
-        </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="icon-paper menu-icon"></i>
-                <span class="menu-title">Payments</span>
-            </a>
-        </li>
 
 
 

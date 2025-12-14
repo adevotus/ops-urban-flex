@@ -19,7 +19,7 @@
                         <div class="card shadow-sm">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h4 class="card-title mb-0">Vehicle  List</h4>
+                                    <h4 class="card-title mb-0">Agreement   List</h4>
                                     <!-- Button to open modal -->
                                 </div>
 
@@ -28,52 +28,58 @@
                                         <thead class="bg-primary text-white">
                                         <tr>
                                             <th>#</th>
-                                            <th>Vehicle No</th>
-                                            <th>Model</th>
-                                            <th>Type</th>
-                                            <th>Color</th>
-                                            <th>Condition</th>
-                                            <th>Capacity</th>
-                                            <th>Reg Number</th>
-                                            <th>Owner Name</th>
-                                            <th>Owner Number</th>
-                                            <th>Registration Date</th>
+                                            <th>Agreement No</th>
+                                            <th>Rental Type</th>
+                                            <th>Lease Type</th>
+                                            <th>Vehicle Price (TZS)</th>
+                                            <th>Deposit (TZS)</th>
+                                            <th>Final Loan (TZS)</th>
+                                            <th>Installment (TZS)</th>
+                                            <th>Profit %</th>
+                                            <th>Duration</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Payment Mode</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
                                         </thead>
 
                                         <tbody>
-                                        @forelse($vehicleList as $index => $vehicle)
+                                        @forelse($agreementList as $index => $agreement)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
 
-                                            <td>{{ $vehicle['vehicle_number'] ?? '-' }}</td>
+                                            <td>{{ $agreement['agreement_number'] ?? '-' }}</td>
 
-                                            <td>{{ $vehicle['vehicle_model'] ?? '-' }}</td>
+                                            <td>{{ ucfirst($agreement['rental_type'] ?? '-') }}</td>
 
-                                            <td>{{ $vehicle['vehicle_type'] ?? '-' }}</td>
+                                            <td>{{ ucfirst(str_replace('_', ' ', $agreement['lease_type'] ?? '-')) }}</td>
 
-                                            <td>{{ $vehicle['vehicle_color'] ?? '-' }}</td>
+                                            <td>{{ number_format($agreement['vehicle_price'] ?? 0) }}</td>
 
-                                            <td>{{ $vehicle['vehicle_condition'] ?? '-' }}</td>
+                                            <td>{{ number_format($agreement['initial_deposit'] ?? 0) }}</td>
 
-                                            <td>{{ $vehicle['capacity'] ?? '-' }}</td>
+                                            <td>{{ number_format($agreement['final_loan_amount'] ?? 0) }}</td>
 
-                                            <td>{{ $vehicle['vehicle_reg_number'] ?? '-' }}</td>
+                                            <td>{{ number_format($agreement['installment_amount'] ?? 0) }}</td>
 
-                                            <td>{{ ucfirst($vehicle['owner_name'] ?? '-') }}</td>
+                                            <td>{{ $agreement['profit_percentage'] ?? '-' }}%</td>
 
-                                            <td>{{ $vehicle['owner_number'] ?? '-' }}</td>
+                                            <td>{{ $agreement['rental_duration'] ?? '-' }}</td>
 
-                                            <td>{{ $vehicle['registration_date'] ?? '-' }}</td>
+                                            <td>{{ $agreement['agreement_start_date'] ?? '-' }}</td>
+
+                                            <td>{{ $agreement['agreement_end_date'] ?? '-' }}</td>
+
+                                            <td>{{ ucfirst(str_replace('_', ' ', $agreement['payment_mode'] ?? '-')) }}</td>
 
                                             {{-- Status --}}
                                             <td>
-                                                @if(($vehicle['status'] ?? '') === 'LOANED')
-                                                <span class="badge bg-warning">Loaned</span>
+                                                @if(($agreement['status'] ?? '') === 'ACTIVE')
+                                                <span class="badge bg-success">Active</span>
                                                 @else
-                                                <span class="badge bg-success">{{ $vehicle['status'] ?? '-' }}</span>
+                                                <span class="badge bg-secondary">{{ $agreement['status'] }}</span>
                                                 @endif
                                             </td>
 
@@ -85,13 +91,12 @@
 
                                         @empty
                                         <tr>
-                                            <td colspan="13" class="text-center text-muted py-3">
-                                                No Vehicles Found.
+                                            <td colspan="15" class="text-center text-muted py-3">
+                                                No Agreements Found.
                                             </td>
                                         </tr>
                                         @endforelse
                                         </tbody>
-
 
 
 

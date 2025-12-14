@@ -15,17 +15,16 @@ class ManagerController extends Controller
     protected $authHost;
     protected $endPointToken;
     protected $userService;
-
     protected $notificationService;
+    protected $sharedController;
 
-    protected $clientHost;
-    public function __construct(UserService $userService , NotificationService $notificationService ){
+    public function __construct(UserService $userService , NotificationService $notificationService ,SharedController $sharedController){
         $this->userService = $userService;
         $this->authHost = config('app.auth_host');
         $this->endPointToken=config('app.jwt_end_point_token');
         $this->clientHost = config('app.client_host');
         $this->notificationService = $notificationService;
-
+        $this->sharedController =$sharedController;
 
     }
     protected function authUser()
@@ -47,32 +46,20 @@ class ManagerController extends Controller
         return view('manager.dashboard');
     }
 
-    public function ownerList()
-    {
-        try {
-            // Call API
-            $response = Http::withToken($this->endPointToken)->get($this->authHost . '/api/v1/users/owner');
+    public function vehicleDashboard(){
 
-            LoggerUtil::info("Owner List API RAW Response: " . $response->body());
+        return view('manager.dashboard');
+    }
+    public function propertyDashboard(){
+        return "manager property dashboard view";
+    }
 
-            $res = $response->json();
+    public function ownerList(){
+        $ownerList = $this->sharedController->ownerList();
+          //dd($ownerList);
+        return view('manager.pages.client_list', ['ownerList' => $ownerList]);
 
-            if ($response->status() !== 200 || ($res['status'] ?? null) !== "200") {
-                LoggerUtil::warning("Failed to fetch owner list. Response: " . json_encode($res));
 
-                return view('manager.pages.client_list', ['ownerList' => []])->with('error', 'Failed to load owner list.');
-            }
-
-            $ownerList = $res['Data'] ?? [];
-
-           // dd($ownerList);
-            return view('manager.pages.client_list', ['ownerList' => $ownerList]);
-
-        } catch (\Exception $e) {
-
-            LoggerUtil::error("Error fetching owner list: " . $e->getMessage());
-            return view('manager.pages.client_list', ['ownerList' => []])->with('error', 'Something went wrong. Please try again.');
-        }
     }
 
 
@@ -127,6 +114,47 @@ class ManagerController extends Controller
 
         }
 
+    }
+
+    public function vehicleList(){
+
+        $vehicleList = $this->sharedController->vehicleList();
+
+        return view('manager.pages.vehicle_list', ['vehicleList' => $vehicleList]);
+
+    }
+
+
+    public function driverList(){
+
+        $driverList = $this->sharedController->driverList();
+
+        $driverList = collect($driverList)->map(function ($driver) {
+            if (isset($driver['additional_info']) && is_string($driver['additional_info'])) {$driver['additional_info'] = json_decode($driver['additional_info'], true);}
+            return $driver;
+        })->toArray();
+
+        return view('manager.pages.driver_list', ['driverList' => $driverList]);
+
+    }
+    public  function loanList(){
+
+        $loanList = $this->sharedController->loanList();
+
+        return view('manager.pages.loan_list', ['loanList' => $loanList]);
+
+    }
+
+    public function agreementList(){
+
+        $agreementList = $this->sharedController->agreementList();
+
+        return view('manager.pages.agreement_list', ['agreementList' => $agreementList]);
+
+    }
+
+    public function driverRegistrationStore(Request $request){
+        return null;
     }
     /**
      * Show the form for creating a new resource.

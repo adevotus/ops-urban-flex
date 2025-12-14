@@ -19,7 +19,7 @@
                         <div class="card shadow-sm">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h4 class="card-title mb-0">Vehicle  List</h4>
+                                    <h4 class="card-title mb-0">Driver  List</h4>
                                     <!-- Button to open modal -->
                                 </div>
 
@@ -28,75 +28,54 @@
                                         <thead class="bg-primary text-white">
                                         <tr>
                                             <th>#</th>
-                                            <th>Vehicle No</th>
-                                            <th>Model</th>
-                                            <th>Type</th>
-                                            <th>Color</th>
-                                            <th>Condition</th>
-                                            <th>Capacity</th>
-                                            <th>Reg Number</th>
-                                            <th>Owner Name</th>
+                                            <th>Vehicle Owner</th>
+                                            <th>Email</th>
+                                            <th>Phone Number</th>
+                                            <th>Address</th>
                                             <th>Owner Number</th>
-                                            <th>Registration Date</th>
                                             <th>Status</th>
+                                            <th>Registered On</th>
                                             <th>Actions</th>
                                         </tr>
                                         </thead>
 
                                         <tbody>
-                                        @forelse($vehicleList as $index => $vehicle)
+                                        @forelse($ownerList as $index => $owner)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-
-                                            <td>{{ $vehicle['vehicle_number'] ?? '-' }}</td>
-
-                                            <td>{{ $vehicle['vehicle_model'] ?? '-' }}</td>
-
-                                            <td>{{ $vehicle['vehicle_type'] ?? '-' }}</td>
-
-                                            <td>{{ $vehicle['vehicle_color'] ?? '-' }}</td>
-
-                                            <td>{{ $vehicle['vehicle_condition'] ?? '-' }}</td>
-
-                                            <td>{{ $vehicle['capacity'] ?? '-' }}</td>
-
-                                            <td>{{ $vehicle['vehicle_reg_number'] ?? '-' }}</td>
-
-                                            <td>{{ ucfirst($vehicle['owner_name'] ?? '-') }}</td>
-
-                                            <td>{{ $vehicle['owner_number'] ?? '-' }}</td>
-
-                                            <td>{{ $vehicle['registration_date'] ?? '-' }}</td>
-
-                                            {{-- Status --}}
+                                            <td>{{ $owner['first_name'] ?? '' }} {{ $owner['last_name'] ?? '' }}</td>
+                                            <td>{{ $owner['email'] ?? '-' }}</td>
+                                            <td>{{ $owner['phone'] ?? '-' }}</td>
+                                            <td>{{ $owner['address'] ?? '-' }}</td>
+                                            <td>{{ $owner['userNumber'] ?? '-' }}</td>
                                             <td>
-                                                @if(($vehicle['status'] ?? '') === 'LOANED')
-                                                <span class="badge bg-warning">Loaned</span>
+                                                @if(($owner['status'] ?? '') === 'ACTIVE')
+                                                <span class="badge bg-success">Active</span>
                                                 @else
-                                                <span class="badge bg-success">{{ $vehicle['status'] ?? '-' }}</span>
+                                                <span class="badge bg-danger">Inactive</span>
                                                 @endif
                                             </td>
+                                            <td>{{ $owner['created_at'] ?? '-' }}</td>
 
-                                            {{-- Actions --}}
                                             <td>
-                                                <button class="btn btn-primary btn-sm">View</button>
+                                                <button class="btn btn-primary btn-sm">
+                                                    View
+                                                </button>
                                             </td>
                                         </tr>
 
                                         @empty
                                         <tr>
-                                            <td colspan="13" class="text-center text-muted py-3">
-                                                No Vehicles Found.
+                                            <td colspan="9" class="text-center text-muted py-3">
+                                                No owners found.
                                             </td>
                                         </tr>
                                         @endforelse
                                         </tbody>
 
-
-
-
                                     </table>
                                 </div>
+
                             </div>
                         </div>
                     </div>

@@ -15,8 +15,8 @@
             </a>
             <div class="collapse" id="auth">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="#">Owners</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="#"> Drivers </a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{route('help.owner-list')}}">Owners</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{route('help.driver-list')}}"> Drivers </a></li>
                 </ul>
             </div>
         </li>
@@ -29,8 +29,8 @@
             </a>
             <div class="collapse" id="icons">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="#">Active</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="#">Finished</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{route('help.loan-list')}}">Vehicle</a></li>
+<!--                    <li class="nav-item"> <a class="nav-link" href="#">Finished</a></li>-->
                 </ul>
             </div>
         </li>
@@ -43,7 +43,7 @@
             </a>
             <div class="collapse" id="tables">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="#">Active</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{route('help.agreement-list')}}">Vehicle</a></li>
                 </ul>
             </div>
         </li>
