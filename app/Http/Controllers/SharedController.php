@@ -214,5 +214,58 @@ class SharedController extends Controller{
         }
     }
 
+    public function paymentListByOwners(){
+        try {
+            // Call API
+            $response = Http::withToken($this->endPointToken)->get($this->clientHost . '/api/v1/payment/transactions-list');
+
+            LoggerUtil::info("Owner Payment List API RAW Response: " . $response->body());
+
+            $res = $response->json();
+
+            if ($response->status() !== 200 || ($res['status'] ?? null) !== "200") {
+
+                LoggerUtil::warning("Failed to fetch owner payment list. Response: " . json_encode($res));
+
+                return JsonResponse::get('500', 'Failed to retrieve owner payment list.', '');
+            }
+
+            return $res['Data'] ?? [];
+
+        } catch (\Exception $e) {
+
+            LoggerUtil::error("Error fetching owner payment list: " . $e->getMessage());
+
+            return JsonResponse::get('500', 'Failed to retrieve owner payment list.', '');
+        }
+    }
+
+
+    public function paymentTransactionDriverList($loanNumber,$driverNumber){
+        try {
+            // Call API
+            $response = Http::withToken($this->endPointToken)->get($this->clientHost . '/api/v1/payment/driver-transaction-details/'.$loanNumber.'/'.$driverNumber);
+
+            LoggerUtil::info("Driver Payment Transaction List API RAW Response: " . $response->body());
+
+            $res = $response->json();
+
+            if ($response->status() !== 200 || ($res['status'] ?? null) !== "200") {
+
+                LoggerUtil::warning("Failed to fetch driver payment transaction list. Response: " . json_encode($res));
+
+                return JsonResponse::get('500', 'Failed to retrieve driver payment transaction list.', '');
+            }
+
+            return $res['Data'] ?? [];
+
+        } catch (\Exception $e) {
+
+            LoggerUtil::error("Error fetching driver payment transaction list: " . $e->getMessage());
+
+            return JsonResponse::get('500', 'Failed to retrieve driver payment transaction list.', '');
+        }
+    }
+
 
 }

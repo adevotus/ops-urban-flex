@@ -54,6 +54,10 @@ Route::middleware('check.sso')->group(function () {
 
             Route::get('/client-agreement-details/{agreementNumber}/{ownerNumber}',[AgreementController::class,'agreementDetails'])->name('client_agreement_details');
 
+            Route::get('/client-transactions-list',[ManagerController::class,'ownerTransactionsList'])->name('owner_transactions_list');
+
+            Route::get('/client-transactions-drive-history/{loanNumber}/{driverNumber}',[ManagerController::class,'ownerPaymentTransactionsDriverList'])->name('payment_transactions_driver_list');
+
         });
 
     Route::prefix('help')->name('help.')->middleware('role:HelpDesk')->group(function () {

@@ -153,6 +153,25 @@ class ManagerController extends Controller
 
     }
 
+    public function ownerTransactionsList(){
+
+
+        $paymentList = $this->sharedController->paymentListByOwners();
+
+       // dd($paymentList);
+        return view('manager.pages.payment_list', ['paymentList' => $paymentList]  );
+    }
+
+    public function ownerPaymentTransactionsDriverList($loanNumber, $driverNumber){
+
+        $transactionList = $this->sharedController->paymentTransactionDriverList($loanNumber, $driverNumber);
+          
+        // dd($transactionList);
+        return view('manager.pages.components.payment_history_detatils', ['transactionList' => $transactionList, 'totalPaidAmount' =>$transactionList['total_paid_amount']],  );
+    }
+
+
+
     public function driverRegistrationStore(Request $request){
         return null;
     }

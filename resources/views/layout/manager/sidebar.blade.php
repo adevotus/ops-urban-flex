@@ -80,7 +80,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{route('manager.owner_transactions_list')}}">
                 <i class="icon-paper menu-icon"></i>
                 <span class="menu-title">Payments</span>
             </a>
