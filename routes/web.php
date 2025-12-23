@@ -84,3 +84,7 @@ Route::middleware('check.sso')->group(function () {
 
 
 });
+
+Route::get('/', function () {
+    return view('welcome');
+});
