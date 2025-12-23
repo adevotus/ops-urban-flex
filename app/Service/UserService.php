@@ -101,6 +101,7 @@ class UserService {
         LoggerUtil::info("User details found, Number: $userNumber");
         return JsonResponse::get('200', "User details have been found", $details);
     }
+   
 
 
 }

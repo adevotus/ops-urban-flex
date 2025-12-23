@@ -117,6 +117,13 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+          'urban-flex' => [
+        'driver' => 'daily',
+        'channels' => ['daily', 'slack'],
+        'path' => storage_path('logs/urban-flex.log'),
+        'level' => 'debug',
+        'days' => 14,
+    ],
     ],
 
 ];

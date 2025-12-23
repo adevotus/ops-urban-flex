@@ -22,6 +22,35 @@ class SharedController extends Controller{
 
     }
 
+  public function ownersSummaryCounts()
+    {
+        try {
+            $response = Http::withToken($this->endPointToken) ->get($this->clientHost . '/api/v1/external/summary');
+
+            LoggerUtil::info("Owner summary response: " . $response->body());
+
+            if (!$response->successful()) {
+                LoggerUtil::warning("HTTP request failed", [ 'status' => $response->status()  ]);
+
+                return [];
+            }
+
+             $res = $response->json();
+
+            if (($res['status'] ?? null) !== 200) {
+                LoggerUtil::warning("API returned failure", $res);
+                return [];
+            }
+
+            return $res['Data'] ?? [];
+
+        } catch (\Exception $e) {
+            LoggerUtil::error("Error fetching owner summary: " . $e->getMessage());
+            return [];
+        }
+    }
+
+
     public function vehicleList(){
 
         try {
@@ -159,6 +188,35 @@ class SharedController extends Controller{
 
             return JsonResponse::get('500', 'Failed to retrieve agreement list.', '');
         }
+    }
+
+
+    public function getOwnerBasicDetails($userNumber){
+
+        try {
+            // Call API
+            $response = Http::withToken($this->endPointToken)->get($this->authHost . '/api/v1/user/'.$userNumber);
+
+            LoggerUtil::info("Owner basic details API RAW Response: " . $response->body());
+
+            $res = $response->json();
+
+            if ($response->status() !== 200 || ($res['status'] ?? null) !== "200") {
+
+                LoggerUtil::warning("Failed to fetch owner basic info. Response: " . json_encode($res));
+
+                return JsonResponse::get('500', 'Failed to retrieve owner basic info.', '');
+            }
+
+            return $res['Data'] ?? [];
+
+        } catch (\Exception $e) {
+
+            LoggerUtil::error("Error fetching owner info: " . $e->getMessage());
+
+            return JsonResponse::get('500', 'Failed to retrieve owner info.', '');
+        }
+
     }
 
     public function loanDetailsByLoanNumber($loanNumber,$driverNumber){

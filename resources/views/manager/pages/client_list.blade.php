@@ -59,9 +59,9 @@
                                                 <td>{{ $owner['created_at'] ?? '-' }}</td>
 
                                                 <td>
-                                                    <button class="btn btn-primary btn-sm">
+                                                    <a class="btn btn-primary btn-sm" href="{{ route('manager.owner_details', ['ownerNumber' => $owner['userNumber']]) }}">
                                                         View
-                                                    </button>
+                                                    </a>
                                                 </td>
                                             </tr>
 

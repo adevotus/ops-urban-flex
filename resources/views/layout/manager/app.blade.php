@@ -36,7 +36,7 @@
                         <div class="card shadow-sm border-0 rounded-3 bg-primary text-white">
                             <div class="card-body">
                                 <h6 class="mb-2">Total Vehicles Registered</h6>
-                                <h3 class="fw-bold">8</h3>
+                                <h3 class="fw-bold">{{ $ownerSummary['total_vehicles'] ?? 0 }}</h3>
                                 <small>Across all categories</small>
                             </div>
                         </div>
@@ -45,7 +45,7 @@
                         <div class="card shadow-sm border-0 rounded-3 bg-success text-white">
                             <div class="card-body">
                                 <h6 class="mb-2">Active Drivers</h6>
-                                <h3 class="fw-bold">6</h3>
+                                <h3 class="fw-bold">{{$ownerSummary['total_drivers'] ?? 0}}</h3>
                                 <small>Currently assigned drivers</small>
                             </div>
                         </div>
@@ -54,7 +54,7 @@
                         <div class="card shadow-sm border-0 rounded-3 bg-warning text-dark">
                             <div class="card-body">
                                 <h6 class="mb-2">Total Owner</h6>
-                                <h3 class="fw-bold">40</h3>
+                                <h3 class="fw-bold">{{$total_owner_count ?? 0}}</h3>
                                 <small>Registered Vehicle Owner</small>
                             </div>
                         </div>
@@ -63,7 +63,7 @@
                         <div class="card card-tale shadow-sm border-0 rounded-3 text-white">
                             <div class="card-body">
                                 <h6 class="mb-2">Active Agreements</h6>
-                                <h3 class="fw-bold">5</h3>
+                                <h3 class="fw-bold">{{$ownerSummary['total_agreements'] ?? 0}}</h3>
                                 <small>Currently valid rental agreements</small>
                             </div>
                         </div>

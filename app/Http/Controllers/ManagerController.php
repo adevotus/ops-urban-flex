@@ -6,8 +6,14 @@ use App\Dto\JsonResponse;
 use App\Service\NotificationService;
 use App\Service\UserService;
 use App\Util\LoggerUtil;
+use App\Models\AgreementOwner;
+use App\Models\CollectionAccount;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
+
+
 
 class ManagerController extends Controller
 {
@@ -42,24 +48,61 @@ class ManagerController extends Controller
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function index(){
-
+    
         return view('manager.dashboard');
     }
 
     public function vehicleDashboard(){
 
-        return view('manager.dashboard');
+        $ownerCountsSummary = $this->sharedController->ownersSummaryCounts();
+         $ownerList = $this->sharedController->ownerList();
+
+           // dd($ownerCountsSummary);
+
+            return view('manager.dashboard',[
+                   'ownerSummary' => (array) $ownerCountsSummary,
+                   'total_owner_count' => count($ownerList)
+
+            ]);
     }
+
     public function propertyDashboard(){
         return "manager property dashboard view";
     }
 
     public function ownerList(){
+
         $ownerList = $this->sharedController->ownerList();
+
           //dd($ownerList);
         return view('manager.pages.client_list', ['ownerList' => $ownerList]);
 
 
+    }
+
+   public function ownerVehicleDetails($ownerNumber)
+    {
+        // Log the owner number
+        LoggerUtil::info("The vehicle Owner number: $ownerNumber");
+
+        if (!$ownerNumber) {
+            return redirect()->back()->with('error', 'Owner number is required.');
+        }
+
+        $ownerData = $this->sharedController->getOwnerBasicDetails($ownerNumber);
+
+        $agreementData = AgreementOwner::where('owner_number', $ownerNumber)->get();
+
+        $collectionData = CollectionAccount::where('owner_number', $ownerNumber)->get();
+
+       LoggerUtil::info("The vehicle Owner details are: " . json_encode($ownerData) . " | Agreements: " . json_encode($agreementData) . " | Collections: " . json_encode($collectionData));         
+       
+
+        return view('manager.pages.components.owner_details', [
+            'ownerData' => $ownerData,
+            'agreementData' => $agreementData,
+            'collectionData' => $collectionData,
+        ]);
     }
 
 
@@ -74,9 +117,13 @@ class ManagerController extends Controller
 
         $user = $this->authUser();
 
-        LoggerUtil::info("vehicle  registration request: " . json_encode($request->all()));
+        LoggerUtil::info("owner  registration request: " . json_encode($request->all()));
 
         $ownerInfo = $request->only(['first_name', 'last_name', 'email', 'address', 'phone', 'gender']);
+
+        $collectionsData = $request->only(['collection_method','account_number','account_name','collection_day','collection_notes']);
+
+        $agreementData = $request->only(['remarks','agreement_number','agreement_type','profit_percentage','payment_mode','penalty_percentage','status','agreements_notes']);
 
         $ownerInfo['role_id'] = 4;
 
@@ -105,6 +152,19 @@ class ManagerController extends Controller
 
             $this->notificationService->sendOwnerRegistrationNotification( $ownerInfo['first_name'], $ownerInfo['email'], $ownerInfo['phone'], $user->userNumber);
 
+            DB::transaction(function () use ($owenNumber, $agreementData, $collectionsData) {
+
+                $this->createOwnerAgreement($owenNumber, $agreementData);
+
+                LoggerUtil::info('Agreements was created ', [  'ownerNumber' => $owenNumber,  'agreement' => $agreementData    ]);
+
+          
+                $this->collectAccountCreations($owenNumber, $collectionsData);
+
+                LoggerUtil::info('Creating collection account', [  'ownerNumber' => $owenNumber,  'collection' => $collectionsData    ]);
+
+            });
+
             return JsonResponse::get(200,'Owner registered successfully', $ownerData);
 
 
@@ -116,6 +176,52 @@ class ManagerController extends Controller
 
     }
 
+
+  protected function collectAccountCreations($owenNumber, array $collectionsData): void
+    {
+        LoggerUtil::info('Creating collection account', [  'ownerNumber' => $owenNumber,  'collection' => $collectionsData    ]);
+
+     if (!$owenNumber) {
+                LoggerUtil::warning('Owner number missing, cannot create agreement');
+                return;
+            }
+
+        CollectionAccount::create([
+            'owner_number'       => $owenNumber,
+            'collection_method'  => $collectionsData['collection_method'],
+            'account_number'     => $collectionsData['account_number'],
+            'account_name'       => $collectionsData['account_name'],
+            'collection_day'     => $collectionsData['collection_day'],
+            'collection_notes'   => $collectionsData['collection_notes'] ?? null,
+        ]);
+    }
+
+
+    protected function createOwnerAgreement($owenNumber, array $agreementData): void
+        {
+            LoggerUtil::info('Creating owner agreement', ['owner' => $owenNumber,   'agreement' => $agreementData  ]);
+
+  
+
+            if (!$owenNumber) {
+                LoggerUtil::warning('Owner number missing, cannot create agreement');
+                return;
+            }
+
+            AgreementOwner::create([
+                'owner_number'       => $owenNumber,
+                'agreement_number'   => $agreementData['agreement_number'],
+                'agreement_type'     => $agreementData['agreement_type'],
+                'profit_percentage'  => $agreementData['profit_percentage'],
+                'payment_mode'       => $agreementData['payment_mode'],
+                'penalty_percentage' => $agreementData['penalty_percentage'] ?? 0,
+                'status'             => $agreementData['status'] ?? 'ACTIVE',
+                'agreements_notes'   => $agreementData['agreements_notes'] ?? null,
+            ]);
+        }
+
+
+
     public function vehicleList(){
 
         $vehicleList = $this->sharedController->vehicleList();
@@ -123,6 +229,7 @@ class ManagerController extends Controller
         return view('manager.pages.vehicle_list', ['vehicleList' => $vehicleList]);
 
     }
+    
 
 
     public function driverList(){
@@ -137,6 +244,8 @@ class ManagerController extends Controller
         return view('manager.pages.driver_list', ['driverList' => $driverList]);
 
     }
+
+
     public  function loanList(){
 
         $loanList = $this->sharedController->loanList();
@@ -144,6 +253,8 @@ class ManagerController extends Controller
         return view('manager.pages.loan_list', ['loanList' => $loanList]);
 
     }
+
+
 
     public function agreementList(){
 
@@ -153,6 +264,7 @@ class ManagerController extends Controller
 
     }
 
+
     public function ownerTransactionsList(){
 
 
@@ -161,6 +273,8 @@ class ManagerController extends Controller
        // dd($paymentList);
         return view('manager.pages.payment_list', ['paymentList' => $paymentList]  );
     }
+
+
 
     public function ownerPaymentTransactionsDriverList($loanNumber, $driverNumber){
 
@@ -175,69 +289,6 @@ class ManagerController extends Controller
     public function driverRegistrationStore(Request $request){
         return null;
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+   
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

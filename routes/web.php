@@ -40,6 +40,8 @@ Route::middleware('check.sso')->group(function () {
 
             Route::post('/owner-registration',[ManagerController::class,'ownerRegistrationStore'])->name('owner_registration_store');
 
+             Route::get('/owner-vehicle-details/{ownerNumber}',[ManagerController::class,'ownerVehicleDetails'])->name('owner_details');
+
             Route::get('/vehicle-list',[ManagerController::class,'vehicleList'])->name('vehicle-list');
 
             Route::get('/driver-list',[ManagerController::class,'driverList'])->name('driver-list');
@@ -57,6 +59,8 @@ Route::middleware('check.sso')->group(function () {
             Route::get('/client-transactions-list',[ManagerController::class,'ownerTransactionsList'])->name('owner_transactions_list');
 
             Route::get('/client-transactions-drive-history/{loanNumber}/{driverNumber}',[ManagerController::class,'ownerPaymentTransactionsDriverList'])->name('payment_transactions_driver_list');
+
+           
 
         });
 
