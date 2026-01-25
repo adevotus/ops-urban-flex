@@ -48,7 +48,7 @@ class ManagerController extends Controller
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function index(){
-    
+
         return view('manager.dashboard');
     }
 
@@ -67,7 +67,7 @@ class ManagerController extends Controller
     }
 
     public function propertyDashboard(){
-        return "manager property dashboard view";
+        return view('manager.dashboard_prop');
     }
 
     public function ownerList(){
@@ -95,8 +95,8 @@ class ManagerController extends Controller
 
         $collectionData = CollectionAccount::where('owner_number', $ownerNumber)->get();
 
-       LoggerUtil::info("The vehicle Owner details are: " . json_encode($ownerData) . " | Agreements: " . json_encode($agreementData) . " | Collections: " . json_encode($collectionData));         
-       
+       LoggerUtil::info("The vehicle Owner details are: " . json_encode($ownerData) . " | Agreements: " . json_encode($agreementData) . " | Collections: " . json_encode($collectionData));
+
 
         return view('manager.pages.components.owner_details', [
             'ownerData' => $ownerData,
@@ -158,7 +158,7 @@ class ManagerController extends Controller
 
                 LoggerUtil::info('Agreements was created ', [  'ownerNumber' => $owenNumber,  'agreement' => $agreementData    ]);
 
-          
+
                 $this->collectAccountCreations($owenNumber, $collectionsData);
 
                 LoggerUtil::info('Creating collection account', [  'ownerNumber' => $owenNumber,  'collection' => $collectionsData    ]);
@@ -201,7 +201,7 @@ class ManagerController extends Controller
         {
             LoggerUtil::info('Creating owner agreement', ['owner' => $owenNumber,   'agreement' => $agreementData  ]);
 
-  
+
 
             if (!$owenNumber) {
                 LoggerUtil::warning('Owner number missing, cannot create agreement');
@@ -229,7 +229,7 @@ class ManagerController extends Controller
         return view('manager.pages.vehicle_list', ['vehicleList' => $vehicleList]);
 
     }
-    
+
 
 
     public function driverList(){
@@ -279,7 +279,7 @@ class ManagerController extends Controller
     public function ownerPaymentTransactionsDriverList($loanNumber, $driverNumber){
 
         $transactionList = $this->sharedController->paymentTransactionDriverList($loanNumber, $driverNumber);
-          
+
         // dd($transactionList);
         return view('manager.pages.components.payment_history_detatils', ['transactionList' => $transactionList, 'totalPaidAmount' =>$transactionList['total_paid_amount']],  );
     }
@@ -289,6 +289,17 @@ class ManagerController extends Controller
     public function driverRegistrationStore(Request $request){
         return null;
     }
-   
+
+    public function landLordList(){
+
+        $landLordList = $this->sharedController->landLordList();
+        return view('manager.pages.landlord_list',[
+            'landlords' => $landLordList
+        ]);
+    }
+    public function landLordRegister(){
+        return view('manager.pages.components.landlord_registrations');
+    }
+
 
 }

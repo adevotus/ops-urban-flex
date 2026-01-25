@@ -325,5 +325,32 @@ class SharedController extends Controller{
         }
     }
 
+    public function landLordList()
+    {
+        try {
+            // Call API
+            $response = Http::withToken($this->endPointToken)->get($this->authHost . '/api/v1/users/landLord');
+
+            LoggerUtil::info("landlord List API RAW Response: " . $response->body());
+
+            $res = $response->json();
+
+            if ($response->status() !== 200 || ($res['status'] ?? null) !== "200") {
+
+                LoggerUtil::warning("Failed to fetch  landlords list. Response: " . json_encode($res));
+
+                return JsonResponse::get('500', 'Failed to retrieve landlord list.', '');
+            }
+
+            return $res['Data'] ?? [];
+
+        } catch (\Exception $e) {
+
+            LoggerUtil::error("Error fetching landlord list: " . $e->getMessage());
+
+            return JsonResponse::get('500', 'Failed to retrieve landlord list.', '');
+        }
+    }
+
 
 }

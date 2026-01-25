@@ -30,6 +30,10 @@ class Status
     public const INACTIVE = 'INACTIVE';
 
     public const SUSPENDED = 'SUSPENDED';
+
+    public const EXISTING = 'EXISTING';
+
+    public const NEW_LOAN = 'NEW_LOAN';
     /**
      * Get all possible statuses.
      *
@@ -59,6 +63,8 @@ class Status
             self::ACTIVE,
             self::INACTIVE,
             self::SUSPENDED,
+            self::EXISTING,
+            self::NEW_LOAN,
 
         ];
     }
