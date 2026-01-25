@@ -70,6 +70,10 @@ class ManagerController extends Controller
         return view('manager.dashboard_prop');
     }
 
+    public function  debitDashboard(){
+        return ("this debit collector dashboard");
+    }
+
     public function ownerList(){
 
         $ownerList = $this->sharedController->ownerList();

@@ -34,6 +34,8 @@ Route::middleware('check.sso')->group(function () {
 
             Route::get('/dashboard/property', [ManagerController::class, 'propertyDashboard'])->name('dashboard.property');
 
+            Route::get('/dashboard/debit', [ManagerController::class, 'debitDashboard'])->name('dashboard.debit');
+
 
             Route::get('/owner-list',[ManagerController::class,'ownerList'])->name('owner-list');
             Route::get('/owner-registration',[ManagerController::class,'ownerRegistration'])->name('owner-registration');

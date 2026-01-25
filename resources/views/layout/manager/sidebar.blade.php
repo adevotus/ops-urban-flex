@@ -22,6 +22,11 @@
                         <a class="nav-link {{ request()->routeIs('manager.dashboard.property') ? 'active' : '' }}" href="{{ route('manager.dashboard.property') }}">Property Rental
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('manager.dashboard.debit') ? 'active' : '' }}" href="{{ route('manager.dashboard.debit') }}">Debit Collections
+                        </a>
+                    </li>
+
 
                 </ul>
             </div>
