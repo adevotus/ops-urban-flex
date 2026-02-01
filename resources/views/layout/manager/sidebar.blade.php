@@ -46,6 +46,7 @@
                     <li class="nav-item"> <a class="nav-link" href="{{route('manager.owner-list')}}"> Owners </a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{route('manager.driver-list')}}"> Drivers </a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{route('manager.landLord_list')}}"> LandLords</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{route('manager.shopOwner_list')}}"> ShopOwners</a></li>
 
                 </ul>
             </div>

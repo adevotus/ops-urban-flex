@@ -15,14 +15,14 @@
                         <div class="card">
                             <div class="card-body">
 
-                                <h4 class="card-title"><a href="{{route('manager.landLord_list')}}" class="btn btn-primary btn-sm"><i class="ti-arrow-circle-left"></i></a> Landlord Registration</h4>
-                                <p class="card-description">Enter landlord personal & agreement details</p>
+                                <h4 class="card-title"><a href="{{route('manager.shopOwner_list')}}" class="btn btn-primary btn-sm"><i class="ti-arrow-circle-left"></i></a> Shop Owner Registration</h4>
+                                <p class="card-description">Enter shop owner personal & agreement details</p>
 
                                 <form id="ownerForm" class="forms-sample" enctype="multipart/form-data">
                                     @csrf
 
                                     <!-- ---------------- PERSONAL DETAILS ---------------- -->
-                                    <h5 class="mb-3 text-primary">Landlord Information</h5>
+                                    <h5 class="mb-3 text-primary">Shop Owner Information</h5>
 
                                     <div class="row">
 
@@ -40,76 +40,72 @@
                                             </div>
                                         </div>
 
-
                                         <!-- INDIVIDUAL SECTION -->
-                                        <div id="individualSection" class="type-section" style="display:none;">
+                                        <div id="individualSection" class="type-section row" style="display:none;">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label>First Name</label>
-                                                    <input type="text" class="form-control" name="first_name" required>
+                                                    <label for="individualFirstName">First Name</label>
+                                                    <input type="text" class="form-control" id="individualFirstName" name="first_name" disabled>
                                                 </div>
                                             </div>
-
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label>Last Name</label>
-                                                    <input type="text" class="form-control" name="last_name" required>
+                                                    <label for="individualLastName">Last Name</label>
+                                                    <input type="text" class="form-control" id="individualLastName" name="last_name" disabled>
                                                 </div>
                                             </div>
-
                                         </div>
 
                                         <!-- COMPANY SECTION -->
-                                        <div id="companySection" class="row type-section" style="display:none;">
+                                        <div id="companySection" class="type-section row" style="display:none;">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label>Company Name</label>
-                                                    <input type="text" class="form-control" name="first_name" required>
+                                                    <label for="companyName">Company Name</label>
+                                                    <input type="text" class="form-control" id="companyName" name="first_name" disabled >
                                                 </div>
                                             </div>
-
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label>Registration Number</label>
-                                                    <input type="text" class="form-control" name="last_name" required>
+                                                    <label for="companyRegNumber">Registration Number</label>
+                                                    <input type="text" class="form-control" id="companyRegNumber" name="last_name" disabled>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <!-- FAMILY SECTION -->
-                                        <div id="familySection" class="row type-section" style="display:none;">
+                                        <div id="familySection" class="type-section row" style="display:none;">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label>Family Name</label>
-                                                    <input type="text" class="form-control" name="first_name" required>
+                                                    <label for="familyName">Family Name</label>
+                                                    <input type="text" class="form-control" id="familyName" name="first_name" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label>First Person</label>
-                                                    <input type="text" class="form-control" name="last_name" placeholder="full name" required>
+                                                    <label for="firstPerson">First Person</label>
+                                                    <input type="text" class="form-control" id="firstPerson" name="last_name" placeholder="full name" disabled>
                                                 </div>
                                             </div>
-
                                         </div>
 
                                         <!-- GROUP SECTION -->
-                                        <div id="groupSection" class="row type-section" style="display:none;">
+                                        <div id="groupSection" class="type-section row" style="display:none;">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label>Group Name</label>
-                                                    <input type="text" class="form-control" name="first_name" required>
+                                                    <label for="groupName">Group Name</label>
+                                                    <input type="text" class="form-control" id="groupName" name="first_name" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label>Important Person</label>
-                                                    <input type="text" class="form-control" name="last_name" required placeholder="full name">
+                                                    <label for="importantPerson">Important Person</label>
+                                                    <input type="text" class="form-control" id="importantPerson" name="last_name" placeholder="full name" disabled>
                                                 </div>
                                             </div>
                                         </div>
 
                                     </div>
+
 
                                     <div class="row mt-3">
 
@@ -304,32 +300,43 @@
     document.getElementById("userType").addEventListener("change", function () {
         let type = this.value;
 
-        // Hide all type sections
-        document.querySelectorAll(".type-section").forEach(el => {
-            el.style.display = "none";
-            el.querySelectorAll("input").forEach(i => i.removeAttribute("required"));
+        // Hide all sections and disable all inputs
+        document.querySelectorAll(".type-section").forEach(section => {
+            section.style.display = "none";
+            section.querySelectorAll("input").forEach(input => {
+                input.removeAttribute("required");
+                input.disabled = true; // disable hidden inputs
+            });
         });
 
-        // Show based on selection
-        if (type === "INDIVIDUAL") {
-            document.getElementById("individualSection").style.display = "flex";
-            document.querySelector("input[name='first_name']").setAttribute("required", true);
-            document.querySelector("input[name='last_name']").setAttribute("required", true);
+        let section;
 
-        } else if (type === "COMPANY") {
-            document.getElementById("companySection").style.display = "flex";
-            document.querySelector("input[name='company_name']").setAttribute("required", true);
-            document.querySelector("input[name='registration_no']").setAttribute("required", true);
+        switch(type){
+            case "INDIVIDUAL":
+                section = document.getElementById("individualSection");
+                break;
+            case "COMPANY":
+                section = document.getElementById("companySection");
+                break;
+            case "FAMILY":
+                section = document.getElementById("familySection");
+                break;
+            case "GROUP":
+                section = document.getElementById("groupSection");
+                break;
+            default:
+                section = null;
+        }
 
-        } else if (type === "FAMILY") {
-            document.getElementById("familySection").style.display = "flex";
-            document.querySelector("input[name='family_name']").setAttribute("required", true);
-
-        } else if (type === "GROUP") {
-            document.getElementById("groupSection").style.display = "flex";
-            document.querySelector("input[name='group_name']").setAttribute("required", true);
+        if(section){
+            section.style.display = "flex";
+            section.querySelectorAll("input").forEach(input => {
+                input.disabled = false; // enable visible inputs
+                input.setAttribute("required", true);
+            });
         }
     });
+
 </script>
 
 <script>
@@ -346,11 +353,13 @@
         $("#ownerForm").on("submit", function (e) {
             e.preventDefault();
 
-            let formData = new FormData(this);
+           // let formData = new FormData(this);
+            var form = document.getElementById("ownerForm");
+            var formData = new FormData(form); // Only enabled inputs will be included
             startLoader();
-
+             console.log("th daa sss",formData);
             $.ajax({
-                url: "{{ route('manager.landLord_registration', ['type' => 'landlord']) }}",
+                url: "{{route('manager.shopowner_registration',['type'=>'shopowner'])}}",
                 type: "POST",
                 data: formData,
                 processData: false,

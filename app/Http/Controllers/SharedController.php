@@ -353,4 +353,32 @@ class SharedController extends Controller{
     }
 
 
+    public function shopOwnerList()
+    {
+        try {
+            // Call API
+            $response = Http::withToken($this->endPointToken)->get($this->authHost . '/api/v1/users/shopOwner');
+
+            LoggerUtil::info("shopOwner List API RAW Response: " . $response->body());
+
+            $res = $response->json();
+
+            if ($response->status() !== 200 || ($res['status'] ?? null) !== "200") {
+
+                LoggerUtil::warning("Failed to fetch  shopOwner list. Response: " . json_encode($res));
+
+                return JsonResponse::get('500', 'Failed to retrieve landlord list.', '');
+            }
+
+            return $res['Data'] ?? [];
+
+        } catch (\Exception $e) {
+
+            LoggerUtil::error("Error fetching shopOwner list: " . $e->getMessage());
+
+            return JsonResponse::get('500', 'Failed to retrieve shopOwner list.', '');
+        }
+    }
+
+
 }

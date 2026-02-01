@@ -63,7 +63,15 @@ Route::middleware('check.sso')->group(function () {
             Route::get('/client-transactions-drive-history/{loanNumber}/{driverNumber}',[ManagerController::class,'ownerPaymentTransactionsDriverList'])->name('payment_transactions_driver_list');
 
            Route::get('/client-landlord-list',[ManagerController::class,'landLordList'])->name('landLord_list');
+
            Route::get('/client-landlord-register',[ManagerController::class,'landLordRegister'])->name('landLord_register');
+
+           Route::get('/client-shopOwner-register',[ManagerController::class,'shopOwnerRegister'])->name('shopOwner_register');
+
+           Route::get('/client-shopOwner-list',[ManagerController::class,'shopOwnerList'])->name('shopOwner_list');
+           Route::post('/client-landLord-registration/{type}',[ManagerController::class,'ownerRegisterStore'])->name('landLord_registration');
+           Route::post('/client-shopOwner-registration/{type}',[ManagerController::class,'ownerRegisterStore'])->name('shopowner_registration');
+
 
 
         });

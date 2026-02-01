@@ -181,7 +181,197 @@ class ManagerController extends Controller
     }
 
 
-  protected function collectAccountCreations($owenNumber, array $collectionsData): void
+    public function landlordRegistrationStore(Request $request){
+
+        $user = $this->authUser();
+
+        LoggerUtil::info("landlord registration request: " . json_encode($request->all()));
+
+        $ownerInfo = $request->only(['first_name', 'last_name', 'email', 'address', 'phone', 'gender']);
+
+        $collectionsData = $request->only(['collection_method','account_number','account_name','collection_day','collection_notes']);
+
+        $agreementData = $request->only(['remarks','agreement_number','agreement_type','profit_percentage','payment_mode','penalty_percentage','status','agreements_notes']);
+
+        $ownerInfo['role_id'] = 6;
+
+        try {
+
+            $response = Http::withToken($this->endPointToken)->post($this->authHost . '/api/v1/driver/create', ['driverInfo' => $ownerInfo,]);
+
+            LoggerUtil::info("Owner API Response RAW: " . $response->body());
+
+            $res = $response->json();
+
+            if ($response->status() != 200 || ($res['status'] ?? null) != "200") {
+
+                LoggerUtil::warning("Failed to register vehicle please check again, $response");
+            }
+
+            $owenNumber = $res['Data']['userNumber'];
+
+            $ownerData= json_encode($res['Data'] ?? []);
+
+            if (!$owenNumber) {
+                LoggerUtil::warning("Failed to register vehicle owner please check again, $response");
+                return null;
+            }
+            // TODO Notification logic here
+
+            $this->notificationService->sendOwnerRegistrationNotification( $ownerInfo['first_name'], $ownerInfo['email'], $ownerInfo['phone'], $user->userNumber);
+
+            DB::transaction(function () use ($owenNumber, $agreementData, $collectionsData) {
+
+                $this->createOwnerAgreement($owenNumber, $agreementData);
+
+                LoggerUtil::info('Agreements was created ', [  'ownerNumber' => $owenNumber,  'agreement' => $agreementData    ]);
+
+
+                $this->collectAccountCreations($owenNumber, $collectionsData);
+
+                LoggerUtil::info('Creating collection account', [  'ownerNumber' => $owenNumber,  'collection' => $collectionsData    ]);
+
+            });
+
+            return JsonResponse::get(200,'Owner registered successfully', $ownerData);
+
+
+        } catch (\Exception $e) {
+            LoggerUtil::error("Driver API ERROR: " . $e->getMessage());
+            return JsonResponse::get('500','Failed to connect to Driver API', $e->getMessage());
+
+        }
+
+    }
+
+    public function shopOwnerRegistrationStore(Request $request){
+
+        $user = $this->authUser();
+        LoggerUtil::info("owner  registration request: " . json_encode($request->all()));
+        $ownerInfo = $request->only(['first_name', 'last_name', 'email', 'address', 'phone', 'gender']);
+
+        $collectionsData = $request->only(['collection_method','account_number','account_name','collection_day','collection_notes']);
+
+        $agreementData = $request->only(['remarks','agreement_number','agreement_type','profit_percentage','payment_mode','penalty_percentage','status','agreements_notes']);
+
+        $ownerInfo['role_id'] = 9;
+
+        try {
+
+            $response = Http::withToken($this->endPointToken)->post($this->authHost . '/api/v1/driver/create', ['driverInfo' => $ownerInfo,]);
+
+            LoggerUtil::info("Owner API Response RAW: " . $response->body());
+
+            $res = $response->json();
+
+            if ($response->status() != 200 || ($res['status'] ?? null) != "200") {
+
+                LoggerUtil::warning("Failed to register vehicle please check again, $response");
+            }
+
+            $owenNumber = $res['Data']['userNumber'];
+
+            $ownerData= json_encode($res['Data'] ?? []);
+
+            if (!$owenNumber) {
+                LoggerUtil::warning("Failed to register vehicle owner please check again, $response");
+                return null;
+            }
+            // TODO Notification logic here
+
+            $this->notificationService->sendOwnerRegistrationNotification( $ownerInfo['first_name'], $ownerInfo['email'], $ownerInfo['phone'], $user->userNumber);
+
+            DB::transaction(function () use ($owenNumber, $agreementData, $collectionsData) {
+
+                $this->createOwnerAgreement($owenNumber, $agreementData);
+
+                LoggerUtil::info('Agreements was created ', [  'ownerNumber' => $owenNumber,  'agreement' => $agreementData    ]);
+
+
+                $this->collectAccountCreations($owenNumber, $collectionsData);
+
+                LoggerUtil::info('Creating collection account', [  'ownerNumber' => $owenNumber,  'collection' => $collectionsData    ]);
+
+            });
+
+            return JsonResponse::get(200,'Owner registered successfully', $ownerData);
+
+
+        } catch (\Exception $e) {
+            LoggerUtil::error("Driver API ERROR: " . $e->getMessage());
+            return JsonResponse::get('500','Failed to connect to Driver API', $e->getMessage());
+
+        }
+
+    }
+
+
+    public function ownerRegisterStore(Request $request, $type)
+    {
+        $user = $this->authUser();
+
+        LoggerUtil::info("Owner registration request: " . json_encode($request->all()));
+
+        // Shared fields
+        dd($request->all());
+        $ownerInfo = $request->only(['first_name', 'last_name', 'email', 'address', 'phone', 'gender']);
+        $collectionsData = $request->only(['collection_method','account_number','account_name','collection_day','collection_notes']);
+        $agreementData   = $request->only(['remarks','agreement_number','agreement_type','profit_percentage','payment_mode','penalty_percentage','status','agreements_notes']);
+
+        // Dynamic role ID based on type
+        $roles = [
+            'landlord'  => 6,
+            'shopowner' => 9,
+        ];
+
+        if (!isset($roles[$type])) {
+            return JsonResponse::get(400, "Invalid registration type");
+        }
+
+        $ownerInfo['role_id'] = $roles[$type];
+         dd($collectionsData);
+        try {
+            // Create owner in remote service
+            $response = Http::withToken($this->endPointToken)->post($this->authHost . '/api/v1/driver/create', ['driverInfo' => $ownerInfo]);
+
+            LoggerUtil::info("Owner API Response RAW: " . $response->body());
+
+            $res = $response->json();
+
+            if ($response->status() != 200 || ($res['status'] ?? null) != "200") {
+                LoggerUtil::warning("Failed to register owner: " . $response->body());
+            }
+
+            $ownerNumber = $res['Data']['userNumber'] ?? null;
+            $ownerData   = json_encode($res['Data'] ?? []);
+
+            if (!$ownerNumber) {
+                LoggerUtil::warning("Owner number returned as NULL");
+                return JsonResponse::get(422, 'Owner number missing', []);
+            }
+
+            // Notification
+            $this->notificationService->sendOwnerRegistrationNotification($ownerInfo['first_name'], $ownerInfo['email'], $ownerInfo['phone'], $user->userNumber);
+
+            // Database transactional insert
+            DB::transaction(function () use ($ownerNumber, $agreementData, $collectionsData) {
+                $this->createOwnerAgreement($ownerNumber, $agreementData);
+                LoggerUtil::info('Agreement created for owner: ' . $ownerNumber);
+
+                $this->collectAccountCreations($ownerNumber, $collectionsData);
+                LoggerUtil::info('Collection account created for owner: ' . $ownerNumber);
+            });
+
+            return JsonResponse::get(200, 'Owner registered successfully', $ownerData);
+        }
+        catch (\Exception $e) {
+            LoggerUtil::error("Owner registration ERROR: " . $e->getMessage());
+            return JsonResponse::get(500, 'Failed to connect to Owner API', $e->getMessage());
+        }
+    }
+
+
+    protected function collectAccountCreations($owenNumber, array $collectionsData): void
     {
         LoggerUtil::info('Creating collection account', [  'ownerNumber' => $owenNumber,  'collection' => $collectionsData    ]);
 
@@ -233,6 +423,17 @@ class ManagerController extends Controller
         return view('manager.pages.vehicle_list', ['vehicleList' => $vehicleList]);
 
     }
+
+
+
+    public function shopOwnerList(){
+
+        $shopOwnerList = $this->sharedController->shopOwnerList();
+        return view('manager.pages.shopowner_list',[
+            'shopOwner' => $shopOwnerList
+        ]);
+    }
+
 
 
 
@@ -304,6 +505,10 @@ class ManagerController extends Controller
     public function landLordRegister(){
         return view('manager.pages.components.landlord_registrations');
     }
+    public function shopOwnerRegister(){
+        return view('manager.pages.components.shopowner_registration');
+    }
+
 
 
 }
